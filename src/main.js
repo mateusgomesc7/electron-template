@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -49,3 +49,20 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+ipcMain.on('saveText', (event, arg) => {
+  const fs = require('fs');
+  fs.appendFile('mynewfile1.txt', arg, function (err) {
+    if (err) throw err;
+    console.log('Saved!');
+  });
+});
+
+ipcMain.on('readText', (event, arg) => {
+  const fs = require('fs');
+  fs.readFile('mynewfile1.txt', 'utf8', function (err, data) {
+    if (err) throw err;
+    console.log(data.toString());
+    event.reply('readTextResponse', data);
+  });
+});
